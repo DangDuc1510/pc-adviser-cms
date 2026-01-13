@@ -1,0 +1,216 @@
+/* ProductFormModal.module.css */
+
+/* Image grid and drag effects */
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.imageCard {
+  position: relative;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.imageCard:hover {
+  border-color: #1890ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+}
+
+.imageCard.dragging {
+  opacity: 0.8;
+  transform: rotate(3deg);
+}
+
+.imageCard.dragOver {
+  border: 2px dashed #1890ff;
+  background-color: rgba(24, 144, 255, 0.05);
+}
+
+.imageWrapper {
+  position: relative;
+  padding-top: 100%;
+}
+
+.imageElement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+/* Badges and overlays */
+.primaryBadge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background-color: #52c41a;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.dragHandle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: move;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  padding: 2px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.imageCard:hover .dragHandle {
+  opacity: 1;
+}
+
+.actionButtons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 4px 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.imageCard:hover .actionButtons {
+  opacity: 1;
+}
+
+/* Progress overlay */
+.progressOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 60px;
+  z-index: 3;
+}
+
+/* Upload area */
+.uploadArea {
+  background: #fafafa;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.uploadArea:hover {
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.02);
+}
+
+.uploadArea.dragActive {
+  border-color: #52c41a;
+  background: rgba(82, 196, 26, 0.05);
+}
+
+/* Tips section */
+.tipBox {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  color: #389e0d;
+}
+
+.tipBox strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tipBox ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.tipBox li {
+  margin-bottom: 4px;
+}
+
+/* Loading states */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slideUp {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .imageGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+  }
+  
+  .tipBox {
+    font-size: 11px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .imageGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
