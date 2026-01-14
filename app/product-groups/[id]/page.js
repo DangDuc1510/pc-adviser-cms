@@ -95,7 +95,7 @@ const ProductGroupDetailPage = () => {
       setProducts([]);
       setProductsLoaded(false);
     }
-  }, [isEditMode, group?._id, isCreateMode, form]);
+  }, [isEditMode, group, isCreateMode, form]);
 
   // Load products separately when form is loaded and root categories are available
   useEffect(() => {

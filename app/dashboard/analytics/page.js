@@ -71,19 +71,6 @@ const AnalyticsPage = () => {
     PERMISSIONS.VIEW_ANALYTICS
   );
 
-  if (!canViewAnalytics) {
-    return (
-      <div className="p-6">
-        <Alert
-          message="Không có quyền truy cập"
-          description="Bạn không có quyền xem trang phân tích. Vui lòng liên hệ quản trị viên."
-          type="warning"
-          showIcon
-        />
-      </div>
-    );
-  }
-
   // Get dashboard statistics
   const {
     data: statsData,
@@ -96,6 +83,7 @@ const AnalyticsPage = () => {
       return response.data;
     },
     refetchInterval: 60000,
+    enabled: canViewAnalytics,
   });
 
   // Get orders chart data
@@ -108,6 +96,7 @@ const AnalyticsPage = () => {
       });
       return response.data;
     },
+    enabled: canViewAnalytics,
   });
 
   // Get revenue chart data
@@ -120,6 +109,7 @@ const AnalyticsPage = () => {
       });
       return response.data;
     },
+    enabled: canViewAnalytics,
   });
 
   // Get orders by status
@@ -129,7 +119,21 @@ const AnalyticsPage = () => {
       const response = await StatisticsApi.getOrdersByStatus();
       return response.data;
     },
+    enabled: canViewAnalytics,
   });
+
+  if (!canViewAnalytics) {
+    return (
+      <div className="p-6">
+        <Alert
+          message="Không có quyền truy cập"
+          description="Bạn không có quyền xem trang phân tích. Vui lòng liên hệ quản trị viên."
+          type="warning"
+          showIcon
+        />
+      </div>
+    );
+  }
 
   const stats = statsData || {};
   const orders = stats.orders || {};

@@ -1,4 +1,5 @@
 'use client'
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Form, Input, Button, Divider, message, Alert } from 'antd';
@@ -7,8 +8,9 @@ import MainLayout from "@/components/layout/MainLayout";
 import Link from "next/link";
 import { AuthApi } from '@/apis/auth';
 import { ACCESS_TOKEN, USER_INFO } from '@/config/constants';
+import LoadingFallback from '@/components/common/LoadingFallback';
 
-const LoginPage = () => {
+const LoginPageContent = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -155,6 +157,14 @@ const LoginPage = () => {
                 </MainLayout>
             </div>
         </>
+    );
+};
+
+const LoginPage = () => {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <LoginPageContent />
+        </Suspense>
     );
 };
 
