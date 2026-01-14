@@ -102,13 +102,14 @@ const ProductGroupDetailPage = () => {
     if (!isEditMode || !group || productsLoaded) return;
 
     // Only load if we have root categories OR all products already have categoryLevel0Id
-    const needsCategoryLevel0 = group.products?.some(
+    const productsArray = Array.isArray(group.products) ? group.products : [];
+    const needsCategoryLevel0 = productsArray.some(
       (item) => !item.categoryLevel0Id
     );
     if (needsCategoryLevel0 && rootCategories.length === 0) return;
 
     const loadProducts = async () => {
-      const productItems = group.products || [];
+      const productItems = Array.isArray(group.products) ? group.products : [];
       const loadedProducts = await Promise.all(
         productItems.map(async (item) => {
           const productId = item.productId?._id || item.productId;
@@ -446,7 +447,8 @@ const ProductGroupDetailPage = () => {
 
   // Calculate total price for view mode
   const calculateTotalPrice = () => {
-    if (!group?.products || group.products.length === 0) return 0;
+    if (!Array.isArray(group?.products) || group.products.length === 0)
+      return 0;
 
     return group.products.reduce((total, item) => {
       const product = item.productId;
@@ -995,12 +997,15 @@ const ProductGroupDetailPage = () => {
         title={
           <Space>
             <ShoppingCartOutlined />
-            <span>Danh sách sản phẩm ({group.products?.length || 0})</span>
+            <span>
+              Danh sách sản phẩm (
+              {Array.isArray(group.products) ? group.products.length : 0})
+            </span>
           </Space>
         }
         style={{ marginBottom: 16 }}
       >
-        {!group.products || group.products.length === 0 ? (
+        {!Array.isArray(group.products) || group.products.length === 0 ? (
           <Alert
             message="Chưa có sản phẩm nào"
             description="Thêm sản phẩm vào nhóm bằng cách chỉnh sửa nhóm sản phẩm."

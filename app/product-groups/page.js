@@ -84,7 +84,11 @@ const ProductGroupsPage = () => {
     },
   });
 
-  const groups = groupsData?.groups || groupsData || [];
+  const groups = Array.isArray(groupsData?.groups)
+    ? groupsData.groups
+    : Array.isArray(groupsData)
+    ? groupsData
+    : [];
   const paginationData = groupsData?.pagination || {
     current: page,
     pageSize: pageSize,
@@ -204,7 +208,11 @@ const ProductGroupsPage = () => {
       title: "Số sản phẩm",
       key: "productCount",
       width: 120,
-      render: (_, record) => <Tag>{record.products?.length || 0} sản phẩm</Tag>,
+      render: (_, record) => (
+        <Tag>
+          {Array.isArray(record.products) ? record.products.length : 0} sản phẩm
+        </Tag>
+      ),
     },
     {
       title: "Lượt xem",

@@ -96,12 +96,14 @@ const CategoriesPage = () => {
 
       if (response && response.categories) {
         return {
-          categories: response.categories,
+          categories: Array.isArray(response.categories)
+            ? response.categories
+            : [],
           pagination: response.pagination,
         };
       } else {
         // Fallback for old API response format
-        const categoriesData = response || [];
+        const categoriesData = Array.isArray(response) ? response : [];
         return {
           categories: categoriesData,
           pagination: {
@@ -115,7 +117,9 @@ const CategoriesPage = () => {
     },
   });
 
-  const categories = categoriesData?.categories || [];
+  const categories = Array.isArray(categoriesData?.categories)
+    ? categoriesData.categories
+    : [];
   const paginationData = categoriesData?.pagination || {
     current: 1,
     pageSize: 20,
@@ -124,27 +128,29 @@ const CategoriesPage = () => {
   };
 
   // Query for category hierarchy
-  const { data: categoryTree = [] } = useQuery({
+  const { data: categoryTreeData } = useQuery({
     queryKey: ["categories", "hierarchy"],
     queryFn: async () => {
       const response = await CategoryApi.getHierarchy();
-      return response || [];
+      return Array.isArray(response) ? response : [];
     },
   });
+  const categoryTree = Array.isArray(categoryTreeData) ? categoryTreeData : [];
 
   // Query for all categories (for parent selection)
-  const { data: allCategories = [] } = useQuery({
+  const { data: allCategoriesData } = useQuery({
     queryKey: ["categories", "all"],
     queryFn: async () => {
       const response = await CategoryApi.getAll({ limit: 1000, page: 1 });
       if (response && response.categories) {
-        return response.categories;
+        return Array.isArray(response.categories) ? response.categories : [];
       } else {
-        return response || [];
+        return Array.isArray(response) ? response : [];
       }
     },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
+  const allCategories = Array.isArray(allCategoriesData) ? allCategoriesData : [];
 
   const handleCreateCategory = () => {
     setEditingCategory(null);
@@ -254,6 +260,7 @@ const CategoriesPage = () => {
   };
 
   const renderTreeNodes = (nodes) => {
+    if (!Array.isArray(nodes)) return [];
     return nodes.map((node) => ({
       title: (
         <div
@@ -308,7 +315,9 @@ const CategoriesPage = () => {
       ),
       key: node._id,
       children:
-        node.children?.length > 0 ? renderTreeNodes(node.children) : undefined,
+        Array.isArray(node.children) && node.children.length > 0
+          ? renderTreeNodes(node.children)
+          : undefined,
     }));
   };
 
@@ -583,9 +592,10 @@ const CategoriesPage = () => {
                     <p>
                       Mô tả Meta: {record.metaDescription || "Chưa thiết lập"}
                     </p>
-                    {record.metaKeywords?.length > 0 && (
-                      <p>Từ khóa: {record.metaKeywords.join(", ")}</p>
-                    )}
+                    {Array.isArray(record.metaKeywords) &&
+                      record.metaKeywords.length > 0 && (
+                        <p>Từ khóa: {record.metaKeywords.join(", ")}</p>
+                      )}
                   </Col>
                 </Row>
               </div>

@@ -92,12 +92,12 @@ const BrandsPage = () => {
 
       if (response && response.brands) {
         return {
-          brands: response.brands,
+          brands: Array.isArray(response.brands) ? response.brands : [],
           pagination: response.pagination,
         };
       } else {
         // Fallback for old API response format
-        const brandsData = response || [];
+        const brandsData = Array.isArray(response) ? response : [];
         return {
           brands: brandsData,
           pagination: {
@@ -111,7 +111,9 @@ const BrandsPage = () => {
     },
   });
 
-  const brands = brandsData?.brands || [];
+  const brands = Array.isArray(brandsData?.brands)
+    ? brandsData.brands
+    : [];
   const paginationData = brandsData?.pagination || {
     current: 1,
     pageSize: 20,
@@ -122,8 +124,12 @@ const BrandsPage = () => {
   // Calculate statistics
   const statistics = {
     total: paginationData.total,
-    active: brands.filter((b) => b.isActive).length,
-    inactive: brands.filter((b) => !b.isActive).length,
+    active: Array.isArray(brands)
+      ? brands.filter((b) => b.isActive).length
+      : 0,
+    inactive: Array.isArray(brands)
+      ? brands.filter((b) => !b.isActive).length
+      : 0,
   };
 
   // Query for countries (for filter dropdown)
@@ -131,7 +137,11 @@ const BrandsPage = () => {
     queryKey: ["brands", "countries"],
     queryFn: async () => {
       const response = await BrandApi.getAll();
-      const brandsData = response?.brands || response || [];
+      const brandsData = Array.isArray(response?.brands)
+        ? response.brands
+        : Array.isArray(response)
+        ? response
+        : [];
       return [
         ...new Set(brandsData.map((b) => b.country).filter(Boolean)),
       ].sort();
@@ -139,7 +149,7 @@ const BrandsPage = () => {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const countries = countriesData || [];
+  const countries = Array.isArray(countriesData) ? countriesData : [];
 
   const handleCreateBrand = () => {
     setEditingBrand(null);
@@ -403,11 +413,12 @@ const BrandsPage = () => {
               allowClear
               style={{ width: "100%" }}
             >
-              {countries.map((country) => (
-                <Option key={country} value={country}>
-                  {country}
-                </Option>
-              ))}
+              {Array.isArray(countries) &&
+                countries.map((country) => (
+                  <Option key={country} value={country}>
+                    {country}
+                  </Option>
+                ))}
             </Select>
           </Col>
           <Col span={4}>
@@ -459,9 +470,10 @@ const BrandsPage = () => {
                     <p>
                       Mô tả Meta: {record.metaDescription || "Chưa thiết lập"}
                     </p>
-                    {record.metaKeywords?.length > 0 && (
-                      <p>Từ khóa: {record.metaKeywords.join(", ")}</p>
-                    )}
+                    {Array.isArray(record.metaKeywords) &&
+                      record.metaKeywords.length > 0 && (
+                        <p>Từ khóa: {record.metaKeywords.join(", ")}</p>
+                      )}
                   </Col>
                 </Row>
               </div>
