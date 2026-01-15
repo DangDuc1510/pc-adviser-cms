@@ -22,6 +22,22 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     config.headers["x-access-token"] = getToken();
+    
+    // Set ngrok abuse_interstitial cookie
+    if (typeof window !== "undefined") {
+      // Set cookie in browser
+      document.cookie = "abuse_interstitial=a6ade097b069.ngrok-free.app; path=/";
+      
+      // Also add to Cookie header to ensure it's sent
+      const existingCookies = config.headers.Cookie || "";
+      const abuseCookie = "abuse_interstitial=a6ade097b069.ngrok-free.app";
+      if (!existingCookies.includes("abuse_interstitial")) {
+        config.headers.Cookie = existingCookies 
+          ? `${existingCookies}; ${abuseCookie}` 
+          : abuseCookie;
+      }
+    }
+    
     return config;
   },
   function (error) {
